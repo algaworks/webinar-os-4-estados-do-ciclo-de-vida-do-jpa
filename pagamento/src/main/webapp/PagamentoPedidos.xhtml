@@ -1,0 +1,63 @@
+<ui:composition template="/WEB-INF/template/LayoutPadrao.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<f:metadata>
+		<f:viewAction action="#{pedidoBean.prepararPedidos}" />
+	</f:metadata>
+
+	<ui:define name="titulo">Pagamento de Pedidos</ui:define>
+
+	<ui:define name="corpo">
+		<h1>Pagamento de Pedidos</h1>
+
+		<h:form id="formPagamento">
+			<p:dataTable value="#{pedidoBean.listaPedidos}" var="pedido"
+				style="margin-top: 20px">
+				<p:column headerText="Código"
+					style="text-align: center; width: 100px">
+					<h:outputText value="#{pedido.codigo}" />
+				</p:column>
+				<p:column headerText="Cliente">
+					<h:outputText value="#{pedido.cliente.nome}" />
+				</p:column>
+				<p:column headerText="Data emissão">
+					<h:outputText value="#{pedido.dataEmissao}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>
+				</p:column>
+				<p:column headerText="Status">
+					<h:outputText value="#{pedido.status}" />
+				</p:column>
+				<p:column headerText="Valor total">
+					<h:outputText value="#{pedido.valorTotal}" />
+				</p:column>
+				<p:column headerText="Valor pago">
+					<h:outputText value="#{pedido.valorPago}" />
+				</p:column>
+				<p:column style="width: 100px; text-align: center">
+					<p:commandButton icon="ui-icon-refresh" title="Pagar"
+						oncomplete="PF('pagamentoDlg').show();"
+						update=":formPagamento:valorPagamentoDialogo" process="@this">
+						<f:setPropertyActionListener
+							target="#{pedidoBean.pedidoSelecionado}" value="#{pedido}" />
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+
+			<p:dialog id="valorPagamentoDialogo" header="Adicionar pagamento"
+				widgetVar="pagamentoDlg" modal="true">
+				<p:outputLabel for="valor" value="Valor: " />
+				<p:inputText id="valor" value="#{pedidoBean.valorPagamento}" />
+				<p:commandButton value="Pagar"
+					actionListener="#{pedidoBean.adicionarPagamento}"
+					oncomplete="PF('pagamentoDlg').hide();" update="@form" />
+			</p:dialog>
+		</h:form>
+
+	</ui:define>
+
+</ui:composition>
